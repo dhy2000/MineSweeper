@@ -14,6 +14,9 @@ class MineMap {
     private boolean mineClicked;
     private int discoverCount;
 
+    /* Player Performance */
+    private int leftClickTimes;
+
     public int getSizeX() {
         return sizeX;
     }
@@ -31,21 +34,31 @@ class MineMap {
         return discoverCount;
     }
 
+    public int getLeftClickTimes() {
+        return leftClickTimes;
+    }
+
     private void resetPlayedLog() {
         this.mineClicked = false;
         this.discoverCount = 0;
+        this.leftClickTimes = 0;
     }
 
     enum OperationStatus {
-        SUCCESS("Click Succeed"),
-        OUT_OF_RANGE("Click Position Out of Range"),
-        REJECTED("Click Rejected"),
-        IGNORED("Click Ignored"),
-        MINE_FOUND("You clicked Mine");
+        SUCCESS("Click Succeed", true),
+        OUT_OF_RANGE("Click Position Out of Range", false),
+        REJECTED("Click Rejected", false),
+        IGNORED("Click Ignored", false),
+        MINE_FOUND("You clicked Mine", true);
 
-        private String Message;
-        OperationStatus(String message) {
+        private final String Message;
+        OperationStatus(String message, boolean success) {
             this.Message = message;
+            this.success = success;
+        }
+        private boolean success;
+        public boolean isSuccess() {
+            return this.success;
         }
 
         @Override
@@ -56,8 +69,6 @@ class MineMap {
 
     // Generate An Empty Map
     private void initEmptyMap(int x, int y) {
-        // sizeX = x;
-        // sizeY = y;
         map = new MineCell[x][];
         for (int i = 0; i < x; i++) {
             map[i] = new MineCell[y];
@@ -186,18 +197,17 @@ class MineMap {
                 do {
                     startMap();
                 } while (map[x][y].isMine());
-                click(x, y);
+                return click(x, y);
             }
             else {
-                // System.out.println("You Lose!!!");
                 mineClicked = true;
                 for (int i = 0; i < sizeX; i++) {
                     for (int j = 0; j < sizeX; j++) {
                         map[i][j].discover();
                     }
                 }
+                return OperationStatus.MINE_FOUND;
             }
-            return OperationStatus.MINE_FOUND;
         }
         else {
             if (map[x][y].getNumber() != 0) {
@@ -208,6 +218,7 @@ class MineMap {
                 expand(x, y);
             }
             // System.out.println("Click Success!");
+            leftClickTimes++;
             return OperationStatus.SUCCESS;
         }
     }
@@ -239,7 +250,7 @@ class MineMap {
                 if (cell.hasFlag())
                     flagCount++;
             }
-            if (flagCount == map[x][y].getNumber()) {
+            if (flagCount >= map[x][y].getNumber()) {
                 for (MineCell cell: neighbors) {
                     if (!cell.isDiscovered() && !cell.hasFlag()) {
                         click(cell.getPosX(), cell.getPosY());

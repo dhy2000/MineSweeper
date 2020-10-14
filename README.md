@@ -3,9 +3,12 @@ Big Homework of Java Programming BUAA 2020 Fall.
 
 ## TODO List
 
+### 架构相关
+- [ ] 重构一下`GamePanel`这个类(重命名成`GameBoard`并且分离成`View+Controller`分开的结构)
+
 ### 游戏核心
 
-- [ ] 记录左键点击次数
+- [x] 记录左键点击次数
 - [ ] 增加难度评估功能(3bv)
 
 ### 图形界面
@@ -21,6 +24,9 @@ Big Homework of Java Programming BUAA 2020 Fall.
   （目前可以完整地玩初级难度的扫雷了！支持左键右键，已经打开的格子可以双键。游戏结束后提示输赢并且自动重开）<br>
   约 `2:20` 完成了阶段性开发，建立 Git 仓库。<br>
   约 `2:52` 写下了这篇文档。
+  - 晚上(新主楼)：添加全局单例类`GameOptions`，利用这个类储存配置选项，包括游戏难度以及是否显示调试信息。<br>
+  向吴家焱大佬请教架构优化的问题，争取明天上午能把`GamePanel`类重构一下，分解成`View`和`Controller`。<br>
+  将`Controller`和`Model`(`MineSweeperGame`类)连接起来做好接口。
 - 2020.10.12 周一
   - 下午(新主楼2F)：构思图形界面的架构，学习MVC模式(似乎失败了)
   - 晚上(新主楼2F)：重构了扫雷网格的图形界面(整体是GridLayout的JPanel，里边每个单元套一个CardLayout的小JPanel，包含一个Button和一个Label)。<br>

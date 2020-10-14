@@ -1,10 +1,13 @@
-package org.minesweeper.GUI;
+package org.minesweeper.GUI.Menu;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class MenuBar extends JMenuBar {
+
+    private final MenuController controller = new MenuController(this);
+
     public MenuBar() {
         add(createGameMenu());
         add(createSettingsMenu());
@@ -18,11 +21,13 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem item = new JMenuItem("新游戏(N)", KeyEvent.VK_N);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+        item.addActionListener(controller.getNewGameListener());
         menu.add(item);
         menu.addSeparator();
 
         item = new JMenuItem("退出游戏(E)", KeyEvent.VK_E);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+        item.addActionListener(controller.getExitGameListener());
         menu.add(item);
 
         return menu;
@@ -48,5 +53,9 @@ public class MenuBar extends JMenuBar {
         menu.add(item);
 
         return menu;
+    }
+
+    public MenuController getController() {
+        return controller;
     }
 }

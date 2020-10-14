@@ -1,23 +1,34 @@
-package org.minesweeper.GUI;
+package org.minesweeper.GUI.GameBoard;
 
 import org.jetbrains.annotations.NotNull;
 import org.minesweeper.Game.MineSweeperGame;
+import org.minesweeper.Options.GameOptions;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GamePanel extends JPanel {
+public class GameBoard extends JPanel {
 
     public static final int BUTTON_SIZE = 30;
 
-    private final int rowNum;
-    private final int colNum;
-
-    private final MineSweeperGame game;
+    private int rowNum;
+    private int colNum;
 
     private MineCell [][]mines;
+
+    private final GameBoardController controller = new GameBoardController(this);
+
+    // Icon
+    private final Icon mineIcon = createIcon("resources/img/mine.png");
+    private final Icon flagIcon = createIcon("resources/img/flag.png");
+    private Icon createIcon(String filename) {
+        ImageIcon iconRaw = new ImageIcon(filename);
+        Image img = iconRaw.getImage();
+        Image imgResized = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        return new ImageIcon(imgResized);
+    }
 
     class MineCell extends JPanel {
         private final int rowIndex;
@@ -91,23 +102,28 @@ public class GamePanel extends JPanel {
                 case '-':
                     this.setOpened(false);
                     getButton().setText("");
+                    getButton().setIcon(null);
                     break;
                 case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8':
                     this.setOpened(true);
                     getLabel().setText(String.valueOf(status));
+                    getLabel().setIcon(null);
                     break;
                 case '*':
                     this.setOpened(true);
-                    getLabel().setText("*");
+                    getLabel().setText("");
+                    getLabel().setIcon(mineIcon);
                     break;
                 case 'P':
                     this.setOpened(false);
-                    getButton().setText("P");
+                    getButton().setText("");
+                    getButton().setIcon(flagIcon);
                     break;
                 case ' ':
                     this.setOpened(true);
                     getLabel().setText(" ");
+                    getLabel().setIcon(null);
                 default:
             }
         }
@@ -137,30 +153,37 @@ public class GamePanel extends JPanel {
             private void mouseOnChange(int eventType, int buttonCode) {
                 // eventType: 0 - Pressed, 1 - Released
                 // buttonCode: BUTTON1, BUTTON3
-                if (eventType == 0)
-                    System.out.print("Pressed ");
-                else
-                    System.out.print("Released ");
-                System.out.print(getDescription() + "@(" + rowIndex + "," + colIndex + "): ");
-                System.out.print("[" + buttonCode + "] ");
+                boolean displayMessage = GameOptions.getInstance()
+                        .getDebugMessageConfig().isShowMouseEvent();
+                if (displayMessage) {
+                    if (eventType == 0)
+                        System.out.print("Pressed ");
+                    else
+                        System.out.print("Released ");
+                    System.out.print(getDescription() + "@(" + rowIndex + "," + colIndex + "): ");
+                    System.out.print("[" + buttonCode + "] ");
+                }
+
                 switch (buttonCode) {
                     case MouseEvent.BUTTON1:
                         if (eventType == 0)
                             mouseMask |= (1);
                         else
                             mouseMask &= ~(1);
-                        System.out.println("LEFT");
+                        if (displayMessage)
+                            System.out.println("LEFT");
                         break;
                     case MouseEvent.BUTTON3:
                         if (eventType == 0)
                             mouseMask |= (1 << 1);
                         else
                             mouseMask &= ~(1 << 1);
-                        System.out.println("RIGHT");
+                        if (displayMessage)
+                            System.out.println("RIGHT");
                         break;
                     default:
                 }
-                System.out.println("(" + (mouseMask & 1) + "" + (mouseMask & (1 << 1)) + ")");
+                // System.out.println("(" + (mouseMask & 1) + "" + (mouseMask & (1 << 1)) + ")");
                 updateState();
             }
 
@@ -192,8 +215,8 @@ public class GamePanel extends JPanel {
                                 setState(1);
                                 break;
                             case 2: // Idle -> Other Action
-                                game.rightClick(rowIndex, colIndex);
-                                GamePanel.this.update();
+                                controller.rightClick(rowIndex, colIndex);
+                                // GameBoard.this.update();
                                 setState(2);
                                 break;
                             case 3:
@@ -206,8 +229,8 @@ public class GamePanel extends JPanel {
                         switch (getMouseMask()) {
                             case 0: // Left Pressed -> Released [OKAY]
                                 setState(0);
-                                game.leftClick(rowIndex, colIndex);
-                                GamePanel.this.update();
+                                controller.leftClick(rowIndex, colIndex);
+                                // GameBoard.this.update();
                                 break;
                             case 1: // Left Pressed -> Left Pressed
                                 break;
@@ -233,8 +256,8 @@ public class GamePanel extends JPanel {
             protected void updateState() {
                 int mask = getMouseMask();
                 if (getState() == 3 && mask != 3) {
-                    game.leftRightClick(rowIndex, colIndex);
-                    GamePanel.this.update();
+                    controller.leftRightClick(rowIndex, colIndex);
+//                     GameBoard.this.update();
                 }
                 setState(mask);
             }
@@ -247,14 +270,17 @@ public class GamePanel extends JPanel {
     public int getColNum() {
         return this.colNum;
     }
-
-    public GamePanel(MineSweeperGame game) {
-        this.game = game;
-        this.rowNum = game.getDifficulty().getSizeX();
-        this.colNum = game.getDifficulty().getSizeY();
-
+    public void setBoardSize(int row, int col) {
+        this.rowNum = row;
+        this.colNum = col;
+        removeAll();
+        revalidate();
+        repaint();
         initPanelView();
-        update();
+    }
+
+    public GameBoard() {
+
     }
 
     private void initPanelView() {
@@ -279,24 +305,27 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void update() {
-        String strMap = game.getStringMap();
+    void updateMap(String strMap) {
         for (int i = 0; i < this.rowNum; i++) {
             for (int j = 0; j < this.colNum; j++) {
-                int cur = i * (game.getDifficulty().getSizeX() + 1) + j;
+                int cur = i * (this.rowNum + 1) + j;
                 this.mines[i][j].update(strMap.charAt(cur));
             }
         }
-        // Check isEnd
-        if (game.isEnd()) {
-            if (game.isWin()) {
-                JOptionPane.showMessageDialog(null, "恭喜，你赢了！");
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "抱歉，你输了！");
-            }
-            game.restart();
-            update();
+    }
+
+    void endGame(boolean win, int clicks, int time) {
+        if (win) {
+            JOptionPane.showMessageDialog(null,
+                    "恭喜，你赢了！一共左键点击" + clicks + "次。"
+                            + "游戏时间：" + time + "秒。");
+            // JOptionPane.showMessageDialog(null, "恭喜，你赢了！");
         }
+        else {
+            JOptionPane.showMessageDialog(null, "抱歉，你输了！");
+        }
+        controller.restartGame();
+        // game.restart();
+        // update();
     }
 }

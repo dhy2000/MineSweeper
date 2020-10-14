@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 class MineCell {
     /* Attributes */
-    private int posX;
-    private int posY;
+    private final int posX;
+    private final int posY;
     private int value;
     private boolean discovered;
     private boolean flag;
@@ -38,16 +38,6 @@ class MineCell {
     }
     public int getPosY() {
         return posY;
-    }
-    public void setPosX(int x) {
-        posX = x;
-    }
-    public void setPosY(int y) {
-        posY = y;
-    }
-    public void setPos(int x, int y) {
-        posX = x;
-        posY = y;
     }
 
     /* Methods of Value and Type */
