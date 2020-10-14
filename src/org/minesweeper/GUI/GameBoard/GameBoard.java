@@ -2,13 +2,13 @@ package org.minesweeper.GUI.GameBoard;
 
 import org.jetbrains.annotations.NotNull;
 import org.minesweeper.GUI.Main.MainWindow;
-import org.minesweeper.Game.MineSweeperGame;
 import org.minesweeper.Options.GameOptions;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 
 public class GameBoard extends JPanel {
 
@@ -30,9 +30,9 @@ public class GameBoard extends JPanel {
     }
 
     // Icon
-    private final Icon mineIcon = createIcon("resources/img/mine.png");
-    private final Icon flagIcon = createIcon("resources/img/flag.png");
-    private Icon createIcon(String filename) {
+    private final Icon mineIcon = createIcon(getClass().getResource("/img/mine.png"));
+    private final Icon flagIcon = createIcon(getClass().getResource("/img/flag.png"));
+    private Icon createIcon(URL filename) {
         ImageIcon iconRaw = new ImageIcon(filename);
         Image img = iconRaw.getImage();
         Image imgResized = img.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
