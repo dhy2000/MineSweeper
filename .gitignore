@@ -24,3 +24,4 @@
 *.tar.gz
 *.rar
 
+/resource/META-INF/MANIFEST.MF
