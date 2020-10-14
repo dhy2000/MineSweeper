@@ -21,7 +21,7 @@ public class GameOptions {
     public static class DebugMessageConfig {
         private boolean showPlayerBehavior = true;
         private boolean showPlayerBehaviorFeedback = true;
-        private boolean showMouseEvent = true;
+        private boolean showMouseEvent = false;
         private boolean showGameBehavior = true;
         public boolean isShowPlayerBehavior() {
             return showPlayerBehavior;
@@ -54,7 +54,7 @@ public class GameOptions {
         return debugMessageConfig;
     }
 
-    private GameDifficulty gameDifficulty = GameDifficulty.EASY;
+    private GameDifficulty gameDifficulty = GameDifficulty.MEDIUM;
     public GameDifficulty getGameDifficulty() {
         return gameDifficulty;
     }

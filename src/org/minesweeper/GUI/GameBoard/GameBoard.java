@@ -1,6 +1,7 @@
 package org.minesweeper.GUI.GameBoard;
 
 import org.jetbrains.annotations.NotNull;
+import org.minesweeper.GUI.Main.MainWindow;
 import org.minesweeper.Game.MineSweeperGame;
 import org.minesweeper.Options.GameOptions;
 
@@ -13,12 +14,20 @@ public class GameBoard extends JPanel {
 
     public static final int BUTTON_SIZE = 30;
 
+    private final MainWindow father;
+    public MainWindow getFather() {
+        return father;
+    }
+
     private int rowNum;
     private int colNum;
 
     private MineCell [][]mines;
 
     private final GameBoardController controller = new GameBoardController(this);
+    public GameBoardController getController() {
+        return this.controller;
+    }
 
     // Icon
     private final Icon mineIcon = createIcon("resources/img/mine.png");
@@ -30,6 +39,8 @@ public class GameBoard extends JPanel {
         return new ImageIcon(imgResized);
     }
 
+
+
     class MineCell extends JPanel {
         private final int rowIndex;
         private final int colIndex;
@@ -39,6 +50,7 @@ public class GameBoard extends JPanel {
         private boolean opened;
 
         private void initButton() {
+            this.button.setToolTipText("(" + rowIndex + "," + colIndex + ")");
             this.button.setVisible(true);
             this.button.addMouseListener(this.buttonMouseAdapter);
         }
@@ -279,8 +291,8 @@ public class GameBoard extends JPanel {
         initPanelView();
     }
 
-    public GameBoard() {
-
+    public GameBoard(MainWindow father) {
+        this.father = father;
     }
 
     private void initPanelView() {
@@ -308,7 +320,7 @@ public class GameBoard extends JPanel {
     void updateMap(String strMap) {
         for (int i = 0; i < this.rowNum; i++) {
             for (int j = 0; j < this.colNum; j++) {
-                int cur = i * (this.rowNum + 1) + j;
+                int cur = i * (this.colNum + 1) + j;
                 this.mines[i][j].update(strMap.charAt(cur));
             }
         }

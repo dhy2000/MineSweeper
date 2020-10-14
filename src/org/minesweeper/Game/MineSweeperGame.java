@@ -68,7 +68,7 @@ public class MineSweeperGame {
         updateMap();
         if (GameOptions.getInstance().getDebugMessageConfig().isShowGameBehavior())
             System.out.println("Game Start - " + difficulty.toString());
-        startTimer();
+        // startTimer();
         end = false;
         win = false;
     }
@@ -81,6 +81,9 @@ public class MineSweeperGame {
         start();
     }
 
+    public int getMinesLeft() {
+        return map.getMineNumber() - map.getFlagCount();
+    }
     public String getStringMap() {
         return map.toString();
     }
@@ -153,6 +156,8 @@ public class MineSweeperGame {
             return OperationStatus.GAME_ENDED;
         }
         MineMap.OperationStatus status = map.flag(x, y);
+        if (displayMessage)
+            System.out.println("Mine Remains: " + getMinesLeft());
         if (displayReturn)
             System.out.println(status);
         if (!status.isSuccess()) {

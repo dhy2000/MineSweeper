@@ -13,6 +13,7 @@ class MineMap {
 
     private boolean mineClicked;
     private int discoverCount;
+    private int flagCount;
 
     /* Player Performance */
     private int leftClickTimes;
@@ -32,6 +33,9 @@ class MineMap {
     }
     public int getDiscoverCount() {
         return discoverCount;
+    }
+    public int getFlagCount() {
+        return flagCount;
     }
 
     public int getLeftClickTimes() {
@@ -56,7 +60,7 @@ class MineMap {
             this.Message = message;
             this.success = success;
         }
-        private boolean success;
+        private final boolean success;
         public boolean isSuccess() {
             return this.success;
         }
@@ -234,8 +238,10 @@ class MineMap {
             // System.out.println("Right Click: Already Discovered");
             return OperationStatus.IGNORED;
         }
+        if (map[x][y].hasFlag())
+            flagCount--;
+        else flagCount++;
         map[x][y].toggleFlag();
-        // System.out.println("Right Click Succeed");
         return OperationStatus.SUCCESS;
     }
 

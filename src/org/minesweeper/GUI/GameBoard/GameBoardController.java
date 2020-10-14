@@ -9,8 +9,8 @@ import org.minesweeper.Options.GameOptions;
 public class GameBoardController implements GameUpdater {
     private final GameBoard master;
     private @NotNull MineSweeperGame game;
-    public GameBoardController(GameBoard parent) {
-        this.master = parent;
+    public GameBoardController(GameBoard master) {
+        this.master = master;
         GameDifficulty difficulty = GameOptions.getInstance().getGameDifficulty();
         this.master.setBoardSize(difficulty.getSizeX(), difficulty.getSizeY());
         // start Game at last
@@ -19,13 +19,16 @@ public class GameBoardController implements GameUpdater {
         this.game.enableTimer();
     }
     public void loadGame(MineSweeperGame game) {
-
         this.game = game;
         updateMap(game.getStringMap());
     }
 
     public void restartGame() {
         game.restart(GameOptions.getInstance().getGameDifficulty());
+        master.getFather().getController().setWindowSize(
+                game.getDifficulty().getSizeY() * GameBoard.BUTTON_SIZE,
+                game.getDifficulty().getSizeX() * GameBoard.BUTTON_SIZE
+        );
     }
 
     public void leftClick(int x, int y) {

@@ -35,6 +35,6 @@ public final class GameDifficulty {
     static {
         EASY = new GameDifficulty(9, 9, 10);
         MEDIUM = new GameDifficulty(16, 16, 40);
-        HARD = new GameDifficulty(16, 40, 99);
+        HARD = new GameDifficulty(16, 30, 99);
     }
 }
