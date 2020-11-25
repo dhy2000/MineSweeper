@@ -46,6 +46,7 @@ class MineMap {
         this.mineClicked = false;
         this.discoverCount = 0;
         this.leftClickTimes = 0;
+        this.flagCount = 0;
     }
 
     enum OperationStatus {
@@ -156,6 +157,7 @@ class MineMap {
         sizeX = x;
         sizeY = y;
         this.mineNumber = mineNumber;
+
         startMap();
         return true;
     }
