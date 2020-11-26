@@ -24,7 +24,7 @@ public class GameBoard extends JPanel {
 
     private MineCell [][]mines;
 
-    private final GameBoardController controller = new GameBoardController(this);
+    private final GameBoardController controller;// = new GameBoardController(this);
     public GameBoardController getController() {
         return this.controller;
     }
@@ -293,6 +293,7 @@ public class GameBoard extends JPanel {
 
     public GameBoard(MainWindow father) {
         this.father = father;
+        controller = new GameBoardController(this);
     }
 
     private void initPanelView() {
@@ -317,7 +318,7 @@ public class GameBoard extends JPanel {
         }
     }
 
-    void updateMap(String strMap) {
+    public void updateMap(String strMap) {
         for (int i = 0; i < this.rowNum; i++) {
             for (int j = 0; j < this.colNum; j++) {
                 int cur = i * (this.colNum + 1) + j;
@@ -326,7 +327,8 @@ public class GameBoard extends JPanel {
         }
     }
 
-    void endGame(boolean win, int clicks, int time) {
+    public synchronized void endGame(boolean win, int clicks, int time) {
+        controller.stopAI();
         if (win) {
             JOptionPane.showMessageDialog(null,
                     "恭喜，你赢了！一共左键点击" + clicks + "次。"
@@ -337,6 +339,7 @@ public class GameBoard extends JPanel {
             JOptionPane.showMessageDialog(null, "抱歉，你输了！");
         }
         controller.restartGame();
+        repaint();
         // game.restart();
         // update();
     }

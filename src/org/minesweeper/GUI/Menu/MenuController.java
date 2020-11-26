@@ -1,6 +1,8 @@
 package org.minesweeper.GUI.Menu;
 
 import org.jetbrains.annotations.NotNull;
+import org.minesweeper.AI.AIOne;
+import org.minesweeper.AI.AutoSweeper;
 import org.minesweeper.GUI.Option.OptionBox;
 
 import javax.swing.*;
@@ -48,7 +50,11 @@ public class MenuController {
     private final ActionListener gameAIListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(master.getFather(), "该功能尚未推出");
+//            JOptionPane.showConfirmDialog(master.getFather());
+            int result = JOptionPane.showConfirmDialog(master.getFather(), "启动自动扫雷吗？", "自动扫雷", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                master.getFather().getGameBoard().getController().enableAI();
+            }
         }
     };
     public ActionListener getGameAIListener() {
