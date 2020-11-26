@@ -104,11 +104,63 @@ public class GameBoardController implements GameUpdater {
                     boolean flag = ai.playGame();
                     dialog.dispose();
                     if (!ai.isGameEnd() && !flag) {
-                        JOptionPane.showMessageDialog(master.getFather(), "当前已没有可以自动扫雷的局面");
+//                        JOptionPane.showMessageDialog(master.getFather(), "当前已没有可以自动扫雷的局面");
+                        JDialog dialogAsk = new JDialog(master.getFather(), "下一步", true);
+                        dialogAsk.setSize(400, 150);
+                        dialogAsk.setResizable(false);
+                        dialogAsk.setLocationRelativeTo(null);
+                        JLabel askMsgLabel = new JLabel("当前已没有确定的自动扫雷局面，请选择下一步策略");
+                        JButton quitBtn = new JButton("停止");
+                        JButton act1Btn = new JButton("策略1");
+                        JButton act2Btn = new JButton("策略2");
+                        JButton act3Btn = new JButton("策略3");
+                        quitBtn.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                dialogAsk.dispose();
+                            }
+                        });
+                        act1Btn.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                ai.nextAction(1);
+                                dialogAsk.dispose();
+                                enableAI();
+                            }
+                        });
+                        act2Btn.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                ai.nextAction(2);
+                                dialogAsk.dispose();
+                                enableAI();
+                            }
+                        });
+                        act3Btn.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                ai.nextAction(3);
+                                dialogAsk.dispose();
+                                enableAI();
+                            }
+                        });
+                        JPanel panelAskLabel = new JPanel();
+                        panelAskLabel.add(askMsgLabel);
+                        JPanel panelButton = new JPanel();
+                        panelButton.add(quitBtn);
+                        panelButton.add(act1Btn);
+                        panelButton.add(act2Btn);
+                        panelButton.add(act3Btn);
+                        JPanel panelAsk = new JPanel();
+                        panelAsk.add(panelAskLabel);
+                        panelAsk.add(panelButton);
+                        dialogAsk.setContentPane(panelAsk);
+                        dialogAsk.setVisible(true);
+
                     }
                     master.revalidate();
                     master.getFather().revalidate();
-                    ai = null;
+                    // ai = null;
                 }
             }
         }).start();

@@ -61,4 +61,14 @@ public class GameOptions {
     public void setGameDifficulty(GameDifficulty difficulty) {
         gameDifficulty = difficulty;
     }
+
+    private int aiInterval = 100;
+
+    public int getAiInterval() {
+        return aiInterval;
+    }
+
+    public void setAiInterval(int interval) {
+        this.aiInterval = interval;
+    }
 }

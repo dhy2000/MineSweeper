@@ -60,6 +60,7 @@ public class OptionBox extends JDialog {
         optionGroup.add(jrEasy);
         optionGroup.add(jrMedium);
         optionGroup.add(jrHard);
+
     }
 
     private void loadKeyPanel() {

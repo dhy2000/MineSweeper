@@ -1,12 +1,9 @@
 package org.minesweeper.GUI.Menu;
 
 import org.jetbrains.annotations.NotNull;
-import org.minesweeper.AI.AIOne;
-import org.minesweeper.AI.AutoSweeper;
 import org.minesweeper.GUI.Option.OptionBox;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,7 +12,7 @@ public class MenuController {
     private final @NotNull MenuBar master;
 
     public MenuController(@NotNull MenuBar master) {
-        System.out.println("MenuController Constructed!");
+//        System.out.println("MenuController Constructed!");
         this.master = master;
     }
 

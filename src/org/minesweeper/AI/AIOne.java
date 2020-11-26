@@ -2,8 +2,7 @@ package org.minesweeper.AI;
 
 import org.minesweeper.Game.MineSweeperGame;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.*;
 
 public class AIOne implements AutoSweeper {
 
@@ -270,5 +269,46 @@ public class AIOne implements AutoSweeper {
     @Override
     public boolean isGameEnd() {
         return game.isEnd();
+    }
+
+    @Override
+    public void nextAction(int strategy) {
+        System.out.println("AI Continue!");
+        this.isAlive = true;
+        // refresh the states
+        clickQueue.clear();
+        flagQueue.clear();
+        this.loadCharMap(game.getStringMap());
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                discoveredCount[i][j] = 0;
+                flagCount[i][j] = 0;
+            }
+        }
+        randClick();
+    }
+
+    private void randClick() {
+        List<Position> notvis = new ArrayList<Position>();
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                if (charMap[i][j] == '-') {
+                    notvis.add(new Position(i, j));
+                }
+            }
+        }
+        int n ;
+        n = notvis.size();
+        Random rnd ;
+        rnd = new Random();
+        int idx;
+        idx = rnd.nextInt(n);
+        Position pos;
+        pos = notvis.get(idx);
+        int clickX;
+        int clickY;
+        clickX = pos.getX();
+        clickY = pos.getY();
+        game.leftClick(clickX, clickY);
     }
 }
