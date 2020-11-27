@@ -1,5 +1,6 @@
 package org.minesweeper.AI;
 
+import javafx.scene.control.RadioMenuItem;
 import org.minesweeper.Game.MineSweeperGame;
 
 import java.util.*;
@@ -285,10 +286,23 @@ public class AIOne implements AutoSweeper {
                 flagCount[i][j] = 0;
             }
         }
-        randClick();
+//        randClick();
+        switch (strategy) {
+            case 1:
+                randClick();
+                break;
+            case 2:
+                randClickBorder();
+                break;
+            case 3:
+                System.out.println("Not developed next(3) yet.");
+                break;
+            default:
+                break;
+        }
     }
 
-    private void randClick() {
+    private List<Position> listNotClicked() {
         List<Position> notvis = new ArrayList<Position>();
         for (int i = 0; i < rowNum; i++) {
             for (int j = 0; j < colNum; j++) {
@@ -297,6 +311,12 @@ public class AIOne implements AutoSweeper {
                 }
             }
         }
+        return notvis;
+    }
+
+    private void randClick() {
+        List<Position> notvis;
+        notvis = listNotClicked();
         int n ;
         n = notvis.size();
         Random rnd ;
@@ -305,6 +325,62 @@ public class AIOne implements AutoSweeper {
         idx = rnd.nextInt(n);
         Position pos;
         pos = notvis.get(idx);
+        int clickX;
+        int clickY;
+        clickX = pos.getX();
+        clickY = pos.getY();
+        game.leftClick(clickX, clickY);
+    }
+
+    private List<Position> listBorder() {
+        List<Position> borders = new ArrayList<>();
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                // border:
+                int cnt;
+                cnt = 0;
+                if (charMap[i][j] == '-') {
+                    for (int ii = -1; ii <= 1; ii++) {
+                        for (int jj = -1; jj <= 1; jj++) {
+                            if (ii == 0 && jj == 0)
+                                continue;
+                            int nxti;
+                            int nxtj;
+                            nxti = i + ii;
+                            nxtj = j + jj;
+                            if (nxti < 0 || nxti >= rowNum)
+                                continue;
+                            if (nxtj < 0 || nxtj >= colNum)
+                                continue;
+                            if (charMap[nxti][nxtj] == '-'
+                                    || charMap[nxti][nxtj] == 'P') {
+                                cnt = cnt + 1;
+                            }
+                        }
+                    }
+                    if (cnt < countNeighbors(i, j)) {
+                        borders.add(new Position(i, j));
+                    }
+                }
+            }
+        }
+        return borders;
+    }
+
+    private void randClickBorder() {
+        List<Position> borderList = listBorder();
+        if (borderList.isEmpty()) {
+            randClick();
+            return;
+        }
+        int n;
+        n = borderList.size();
+        Random rnd;
+        rnd = new Random();
+        int idx;
+        idx = rnd.nextInt(n);
+        Position pos;
+        pos = borderList.get(idx);
         int clickX;
         int clickY;
         clickX = pos.getX();
