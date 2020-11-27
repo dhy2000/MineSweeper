@@ -391,7 +391,8 @@ public class AIOne implements AutoSweeper
                 randClickBorder();
                 break;
             case 3:
-                System.out.println("Not developed next(3) yet.");
+//                System.out.println("Not developed next(3) yet.");
+                clickMostProbably();
                 break;
             default:
                 break;
@@ -503,4 +504,89 @@ public class AIOne implements AutoSweeper
         clickY = pos.getY();
         game.leftClick(clickX, clickY);
     }
+
+    private Position minUncertain()
+    {
+        Position retPos = null;
+        List<Position> borderList = listBorder();
+        int minUncertain = 9;
+        for (Position pos : borderList)
+        {
+            // calc Uncertainty
+            int i;
+            i = pos.getX();
+            int j;
+            j = pos.getY();
+            int flgcnt;
+            flgcnt = flagCount[i][j];
+            int discovercnt;
+            discovercnt = discoveredCount[i][j];
+            int neibourcnt;
+            neibourcnt = countNeighbors(i, j);
+            int uncertain;
+            uncertain = neibourcnt - flgcnt - discovercnt;
+            if (uncertain < 0)
+                uncertain = -uncertain;
+            if (uncertain < minUncertain)
+            {
+                minUncertain = uncertain;
+                retPos = pos;
+            }
+        }
+        return retPos;
+    }
+
+    private void clickMostProbably()
+    {
+        List<Position> clickList = new ArrayList<>();
+        Position minUncPos = minUncertain();
+        if (minUncPos == null) {
+            randClick();
+            return;
+        }
+        int i;
+        int j;
+        i = minUncPos.getX();
+        j = minUncPos.getY();
+        for (int ii = -1; ii <= 1; ii++)
+        {
+            for (int jj = -1; jj <= 1; jj++)
+            {
+                if (ii == 0 && jj == 0)
+                {
+                    continue;
+                }
+                int nxti;
+                int nxtj;
+                nxti = i + ii;
+                nxtj = j + jj;
+                if (nxti < 0 || nxti >= rowNum)
+                {
+                    continue;
+                }
+                if (nxtj < 0 || nxtj >= colNum)
+                {
+                    continue;
+                }
+                if (charMap[nxti][nxtj] == '-')
+                {
+                    clickList.add(new Position(nxti, nxtj));
+                }
+            }
+        }
+        int n;
+        n = clickList.size();
+        Random rnd ;
+        rnd = new Random();
+        int idx;
+        idx = rnd.nextInt(n);
+        Position posToClick;
+        posToClick = clickList.get(idx);
+        int clickX;
+        int clickY;
+        clickX = posToClick.getX();
+        clickY = posToClick.getY();
+        game.leftClick(clickX, clickY);
+    }
+
 }
