@@ -5,7 +5,8 @@ import org.minesweeper.Game.MineSweeperGame;
 
 import java.util.*;
 
-public class AIOne implements AutoSweeper {
+public class AIOne implements AutoSweeper
+{
 
     private MineSweeperGame game;
     private int rowNum;
@@ -15,19 +16,23 @@ public class AIOne implements AutoSweeper {
     private int[][] flagCount;
     private boolean isAlive;
 
-    static class Position {
+    static class Position
+    {
         private final int x;
         private final int y;
-        public Position(int x, int y) {
+        public Position(int x, int y)
+        {
             this.x = x;
             this.y = y;
         }
 
-        public int getX() {
+        public int getX()
+        {
             return x;
         }
 
-        public int getY() {
+        public int getY()
+        {
             return y;
         }
     }
@@ -35,50 +40,74 @@ public class AIOne implements AutoSweeper {
     private Queue<Position> clickQueue;
     private Queue<Position> flagQueue;
 
-    private void loadCharMap(String strMap) {
+    private void loadCharMap(String strMap)
+    {
         this.charMap = new char[this.rowNum][];
         for (int i = 0; i < rowNum; i++) {
             this.charMap[i] = new char[this.colNum];
             for (int j = 0; j < colNum; j++) {
                 int cur = i * (this.colNum + 1) + j;
-                this.charMap[i][j] = strMap.charAt(cur);
+                char chr = strMap.charAt(cur);
+                this.charMap[i][j] = chr;
             }
         }
     }
 
-    private int countNeighbors(int x, int y) {
+    private int countNeighbors(int x, int y)
+    {
         int cnt = 0;
-        for (int ii = -1; ii <= 1; ii++) {
-            for (int jj = -1; jj <= 1; jj++) {
+        for (int ii = -1; ii <= 1; ii++)
+        {
+            for (int jj = -1; jj <= 1; jj++)
+            {
                 if (ii == 0 && jj == 0)
                     continue;
-                int ni = x + ii;
-                int nj = y + jj;
+                int ni ;
+                ni = x + ii;
+                int nj ;
+                nj = y + jj;
                 if (ni < 0 || ni >= this.rowNum)
+                {
                     continue;
+                }
                 if (nj < 0 || nj >= this.colNum)
+                {
                     continue;
+                }
                 cnt++;
             }
         }
         return cnt;
     }
 
-    private void countDiscover() {
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
+    private void countDiscover()
+    {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
                 int cnt = 0;
-                for (int ii = -1; ii <= 1; ii++) {
-                    for (int jj = -1; jj <= 1; jj++) {
+                for (int ii = -1; ii <= 1; ii++)
+                {
+                    for (int jj = -1; jj <= 1; jj++)
+                    {
                         int ni = i + ii;
                         int nj = j + jj;
                         if (ni < 0 || ni >= rowNum)
+                        {
                             continue;
+                        }
+
                         if (nj < 0 || nj >= colNum)
+                        {
                             continue;
-                        if (ii == 0 && jj == 0)
+                        }
+                        if (ii == 0 && jj == 0) {
                             continue;
-                        if (this.charMap[ni][nj] == '-' || this.charMap[ni][nj] == 'P') {
+                        }
+                        if (this.charMap[ni][nj] == '-'
+                                || this.charMap[ni][nj] == 'P')
+                        {
                             cnt++;
                         }
                     }
@@ -88,21 +117,33 @@ public class AIOne implements AutoSweeper {
         }
     }
 
-    private void countFlag() {
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
+    private void countFlag()
+    {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
                 int cnt = 0;
-                for (int ii = -1; ii <= 1; ii++) {
-                    for (int jj = -1; jj <= 1; jj++) {
+                for (int ii = -1; ii <= 1; ii++)
+                {
+                    for (int jj = -1; jj <= 1; jj++)
+                    {
                         int ni = i + ii;
                         int nj = j + jj;
                         if (ni < 0 || ni >= rowNum)
+                        {
                             continue;
+                        }
                         if (nj < 0 || nj >= colNum)
+                        {
                             continue;
+                        }
                         if (ii == 0 && jj == 0)
+                        {
                             continue;
-                        if (this.charMap[ni][nj] == 'P') {
+                        }
+                        if (this.charMap[ni][nj] == 'P')
+                        {
                             cnt++;
                         }
                     }
@@ -112,14 +153,20 @@ public class AIOne implements AutoSweeper {
         }
     }
 
-    private boolean selectCanClick() {
+    private boolean selectCanClick()
+    {
         boolean flag = false;
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                if (charMap[i][j] >= '0' && charMap[i][j] <= '9') {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
+                if (charMap[i][j] >= '0' && charMap[i][j] <= '9')
+                {
                     int mineNum = charMap[i][j] - '0';
 //
-                    if (flagCount[i][j] == mineNum && flagCount[i][j] + discoveredCount[i][j] < countNeighbors(i, j)) {
+                    if (flagCount[i][j] == mineNum
+                            && flagCount[i][j] + discoveredCount[i][j] < countNeighbors(i, j))
+                    {
                         flag = true;
                         clickQueue.offer(new Position(i, j));
                     }
@@ -129,13 +176,18 @@ public class AIOne implements AutoSweeper {
         return flag;
     }
 
-    private boolean selectCanFlag() {
+    private boolean selectCanFlag()
+    {
         boolean flag = false;
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                if (charMap[i][j] >= '0' && charMap[i][j] <= '9') {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
+                if (charMap[i][j] >= '0' && charMap[i][j] <= '9')
+                {
                     int mineNum = charMap[i][j] - '0';
-                    if (mineNum > flagCount[i][j] && mineNum + discoveredCount[i][j] == countNeighbors(i, j)) {
+                    if (mineNum > flagCount[i][j]
+                            && mineNum + discoveredCount[i][j] == countNeighbors(i, j)) {
                         flag = true;
                         flagQueue.offer(new Position(i, j));
                     }
@@ -145,49 +197,73 @@ public class AIOne implements AutoSweeper {
         return flag;
     }
 
-    private void doClick() {
-        while (!clickQueue.isEmpty()) {
+    private void doClick()
+    {
+        while (!clickQueue.isEmpty())
+        {
             Position pos = clickQueue.peek();
             clickQueue.poll();
-            if (!isAlive) {
+            if (!isAlive)
+            {
                 return;
             }
-            game.leftRightClick(pos.getX(), pos.getY());
-            if (game.isEnd())
-                return ;
+            int clickX;
+            int clickY;
+            clickX = pos.getX();
+            clickY = pos.getY();
+            game.leftRightClick(clickX, clickY);
+            if (game.isEnd()) {
+                return;
+            }
             loadCharMap(game.getStringMap());
-            try {
+            try
+            {
                 Thread.sleep(SLEEP_INTERVAL);
-            }catch (InterruptedException e) {
+            }
+            catch (InterruptedException e)
+            {
 
             }
-
         }
     }
 
-    private void doFlag() {
-        while (!flagQueue.isEmpty()) {
+    private void doFlag()
+    {
+        while (!flagQueue.isEmpty())
+        {
             Position pos = flagQueue.peek();
             flagQueue.poll();
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
                     int nxtx = dx + pos.getX();
                     int nxty = dy + pos.getY();
                     if (dx == 0 && dy == 0)
+                    {
                         continue;
+                    }
                     if (nxtx < 0 || nxtx >= this.rowNum)
+                    {
                         continue;
+                    }
                     if (nxty < 0 || nxty >= this.colNum)
+                    {
                         continue;
-                    if (charMap[nxtx][nxty] == '-') {
+                    }
+                    if (charMap[nxtx][nxty] == '-')
+                    {
                         if (!isAlive)
                             return;
                         game.rightClick(nxtx, nxty);
                         loadCharMap(game.getStringMap());
 //                        System.out.println(game.getStringMap());
-                        try {
+                        try
+                        {
                             Thread.sleep(SLEEP_INTERVAL);
-                        }catch (InterruptedException e) {
+                        }
+                        catch (InterruptedException e)
+                        {
 
                         }
                     }
@@ -197,7 +273,8 @@ public class AIOne implements AutoSweeper {
         }
     }
 
-    private boolean autoPlayOne() {
+    private boolean autoPlayOne()
+    {
         boolean flgFlag;
         boolean flgClick;
         // loaded map
@@ -209,21 +286,27 @@ public class AIOne implements AutoSweeper {
         countDiscover();
         flgClick = selectCanClick();
         if (!flgFlag && !flgClick)
+        {
             return false;
+        }
         doClick();
         return true;
     }
 
     private void displayCharMap() {
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                System.out.print(charMap[i][j]);
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
+                char ch = charMap[i][j];
+                System.out.print(ch);
             }
             System.out.println();
         }
     }
 
-    public AIOne(MineSweeperGame game) {
+    public AIOne(MineSweeperGame game)
+    {
         clickQueue = new ArrayDeque<>();
         flagQueue = new ArrayDeque<>();
         this.game = game;
@@ -232,21 +315,26 @@ public class AIOne implements AutoSweeper {
         String strMap = game.getStringMap();
         this.loadCharMap(strMap);
         this.discoveredCount = new int[this.rowNum][];
-        for (int i = 0; i < rowNum; i++) {
+        for (int i = 0; i < rowNum; i++)
+        {
             this.discoveredCount[i] = new int [this.colNum];
         }
         this.flagCount = new int[this.rowNum][];
-        for (int i = 0; i < rowNum; i++) {
+        for (int i = 0; i < rowNum; i++)
+        {
             this.flagCount[i] = new int [this.colNum];
         }
     }
 
     @Override
-    public boolean playGame() {
+    public boolean playGame()
+    {
         boolean flag = false;
         isAlive = true;
-        while (isAlive) {
-            if (game.isEnd()){
+        while (isAlive)
+        {
+            if (game.isEnd())
+            {
                 flag = true;
                 break;
             }
@@ -254,7 +342,9 @@ public class AIOne implements AutoSweeper {
             // countDiscover();
             flag = autoPlayOne();
             if (!flag)
+            {
                 break;
+            }
             flag = true;
             loadCharMap(game.getStringMap());
         }
@@ -263,31 +353,37 @@ public class AIOne implements AutoSweeper {
     }
 
     @Override
-    public void stop() {
+    public void stop()
+    {
         this.isAlive = false;
     }
 
     @Override
-    public boolean isGameEnd() {
+    public boolean isGameEnd()
+    {
         return game.isEnd();
     }
 
     @Override
-    public void nextAction(int strategy) {
+    public void nextAction(int strategy)
+    {
         System.out.println("AI Continue!");
         this.isAlive = true;
         // refresh the states
         clickQueue.clear();
         flagQueue.clear();
         this.loadCharMap(game.getStringMap());
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
                 discoveredCount[i][j] = 0;
                 flagCount[i][j] = 0;
             }
         }
 //        randClick();
-        switch (strategy) {
+        switch (strategy)
+        {
             case 1:
                 randClick();
                 break;
@@ -302,10 +398,13 @@ public class AIOne implements AutoSweeper {
         }
     }
 
-    private List<Position> listNotClicked() {
+    private List<Position> listNotClicked()
+    {
         List<Position> notvis = new ArrayList<Position>();
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
                 if (charMap[i][j] == '-') {
                     notvis.add(new Position(i, j));
                 }
@@ -314,7 +413,8 @@ public class AIOne implements AutoSweeper {
         return notvis;
     }
 
-    private void randClick() {
+    private void randClick()
+    {
         List<Position> notvis;
         notvis = listNotClicked();
         int n ;
@@ -332,33 +432,47 @@ public class AIOne implements AutoSweeper {
         game.leftClick(clickX, clickY);
     }
 
-    private List<Position> listBorder() {
+    private List<Position> listBorder()
+    {
         List<Position> borders = new ArrayList<>();
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
+        for (int i = 0; i < rowNum; i++)
+        {
+            for (int j = 0; j < colNum; j++)
+            {
                 // border:
                 int cnt;
                 cnt = 0;
-                if (charMap[i][j] == '-') {
-                    for (int ii = -1; ii <= 1; ii++) {
-                        for (int jj = -1; jj <= 1; jj++) {
+                if (charMap[i][j] == '-')
+                {
+                    for (int ii = -1; ii <= 1; ii++)
+                    {
+                        for (int jj = -1; jj <= 1; jj++)
+                        {
                             if (ii == 0 && jj == 0)
+                            {
                                 continue;
+                            }
                             int nxti;
                             int nxtj;
                             nxti = i + ii;
                             nxtj = j + jj;
                             if (nxti < 0 || nxti >= rowNum)
+                            {
                                 continue;
+                            }
                             if (nxtj < 0 || nxtj >= colNum)
+                            {
                                 continue;
+                            }
                             if (charMap[nxti][nxtj] == '-'
-                                    || charMap[nxti][nxtj] == 'P') {
+                                    || charMap[nxti][nxtj] == 'P')
+                            {
                                 cnt = cnt + 1;
                             }
                         }
                     }
-                    if (cnt < countNeighbors(i, j)) {
+                    if (cnt < countNeighbors(i, j))
+                    {
                         borders.add(new Position(i, j));
                     }
                 }
@@ -367,9 +481,11 @@ public class AIOne implements AutoSweeper {
         return borders;
     }
 
-    private void randClickBorder() {
+    private void randClickBorder()
+    {
         List<Position> borderList = listBorder();
-        if (borderList.isEmpty()) {
+        if (borderList.isEmpty())
+        {
             randClick();
             return;
         }
